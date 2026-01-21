@@ -1,0 +1,244 @@
+{
+  "year": 2026,
+  "region": "Bavaria",
+  "selections": {
+    "2026-02-16": [
+      "a"
+    ],
+    "2026-02-17": [
+      "a"
+    ],
+    "2026-05-22": [
+      "a",
+      "b"
+    ],
+    "2026-05-26": [
+      "a",
+      "b"
+    ],
+    "2026-05-27": [
+      "a",
+      "b"
+    ],
+    "2026-05-25": [
+      "a",
+      "b"
+    ],
+    "2026-06-19": [
+      "a"
+    ],
+    "2026-06-22": [
+      "a"
+    ],
+    "2026-09-11": [
+      "a"
+    ],
+    "2026-08-03": [
+      "a"
+    ],
+    "2026-08-04": [
+      "a"
+    ],
+    "2026-08-05": [
+      "a"
+    ],
+    "2026-08-06": [
+      "a"
+    ],
+    "2026-08-07": [
+      "a"
+    ],
+    "2026-08-10": [
+      "a"
+    ],
+    "2026-08-11": [
+      "a"
+    ],
+    "2026-08-12": [
+      "a"
+    ],
+    "2026-08-13": [
+      "b"
+    ],
+    "2026-08-14": [
+      "b"
+    ],
+    "2026-08-31": [
+      "a"
+    ],
+    "2026-09-01": [
+      "a"
+    ],
+    "2026-07-17": [
+      "a"
+    ],
+    "2026-12-30": [
+      "a"
+    ],
+    "2026-12-29": [
+      "a"
+    ],
+    "2026-12-28": [
+      "a"
+    ],
+    "2026-10-16": [
+      "a"
+    ],
+    "2026-11-13": [
+      "a"
+    ],
+    "2026-02-27": [
+      "a"
+    ],
+    "2026-03-20": [
+      "a"
+    ],
+    "2026-06-23": [
+      "a"
+    ],
+    "2026-12-25": [
+      "a"
+    ],
+    "2026-12-24": [
+      "a"
+    ],
+    "2026-05-15": [
+      "b"
+    ],
+    "2026-06-05": [
+      "b"
+    ],
+    "2026-11-18": [
+      "b"
+    ],
+    "2026-11-19": [
+      "b"
+    ],
+    "2026-12-31": [
+      "b"
+    ],
+    "2026-04-02": [
+      "b"
+    ]
+  },
+  "userClosingDays": {
+    "Bavaria": {
+      "2026-01-01": "Weihnachten 2025/26 - Do + Fr + Mo + Di",
+      "2026-01-02": "Weihnachten 2025/26 - Do + Fr + Mo + Di",
+      "2026-01-03": "Weihnachten 2025/26 - Do + Fr + Mo + Di",
+      "2026-01-04": "Weihnachten 2025/26 - Do + Fr + Mo + Di",
+      "2026-01-05": "Weihnachten 2025/26 - Do + Fr + Mo + Di",
+      "2026-01-06": "Weihnachten 2025/26 - Do + Fr + Mo + Di",
+      "2026-02-16": "Fasching - Mo + Di",
+      "2026-02-17": "Fasching - Mo + Di",
+      "2026-04-02": "Gruendonnerstag - ab 12:30 Uhr; NICHT in Stay Informed",
+      "2026-05-14": "Mai-Schliesstage - Do + Fr",
+      "2026-05-15": "Mai-Schliesstage - Do + Fr",
+      "2026-06-04": "Juni-Schliesstage - Do + Fr; Nicht in Stay Informed",
+      "2026-06-05": "Juni-Schliesstage - Do + Fr; Nicht in Stay Informed",
+      "2026-08-10": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-11": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-12": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-13": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-14": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-15": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-16": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-17": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-18": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-19": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-20": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-21": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-22": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-23": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-24": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-25": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-26": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-27": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-28": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-29": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-08-30": "Sommerferien 2026 - Davor ist Ferienbetreuung",
+      "2026-09-01": "Planungstag - Dienstag",
+      "2026-11-18": "Konzeptionstag - Mittwoch; NICHT in Stay Informed",
+      "2026-12-24": "Weihnachten 2026 - Werktage bis Jahresende; NICHT in Stay Informed",
+      "2026-12-25": "Weihnachten 2026 - Werktage bis Jahresende; NICHT in Stay Informed",
+      "2026-12-26": "Weihnachten 2026 - Werktage bis Jahresende; NICHT in Stay Informed",
+      "2026-12-27": "Weihnachten 2026 - Werktage bis Jahresende; NICHT in Stay Informed",
+      "2026-12-28": "Weihnachten 2026 - Werktage bis Jahresende; NICHT in Stay Informed",
+      "2026-12-29": "Weihnachten 2026 - Werktage bis Jahresende; NICHT in Stay Informed",
+      "2026-12-30": "Weihnachten 2026 - Werktage bis Jahresende; NICHT in Stay Informed",
+      "2026-12-31": "Weihnachten 2026 - Werktage bis Jahresende; NICHT in Stay Informed",
+      "2026-07-17": "Betriebsauflug - NICHT in der Liste"
+    }
+  },
+  "events": {
+    "Bavaria": {
+      "2026-05-22": [
+        "Utrecht"
+      ],
+      "2026-05-23": [
+        "Utrecht"
+      ],
+      "2026-05-24": [
+        "Utrecht"
+      ],
+      "2026-05-25": [
+        "Utrecht"
+      ],
+      "2026-05-26": [
+        "Utrecht"
+      ],
+      "2026-05-27": [
+        "Utrecht"
+      ],
+      "2026-06-19": [
+        "Mühlfeldsee Haus"
+      ],
+      "2026-06-20": [
+        "Mühlfeldsee Haus"
+      ],
+      "2026-06-21": [
+        "Mühlfeldsee Haus"
+      ],
+      "2026-06-22": [
+        "Mühlfeldsee Haus"
+      ],
+      "2026-07-07": [
+        "Tour nach Amsterdam"
+      ],
+      "2026-07-08": [
+        "Tour nach Amsterdam"
+      ],
+      "2026-07-09": [
+        "Tour nach Amsterdam"
+      ],
+      "2026-07-10": [
+        "Tour nach Amsterdam"
+      ],
+      "2026-07-11": [
+        "Tour nach Amsterdam"
+      ],
+      "2026-07-12": [
+        "Tour nach Amsterdam"
+      ],
+      "2026-09-08": [
+        "Bithday Girrrl - Dirty Thirthy"
+      ],
+      "2026-09-09": [
+        "Bithday Girrrl - Dirty Thirthy"
+      ],
+      "2026-09-30": [
+        "Work ⚠️ | Paul"
+      ],
+      "2026-03-26": [
+        "Work ⚠️ | Paul"
+      ],
+      "2026-06-24": [
+        "Work ⚠️ | Paul"
+      ],
+      "2026-12-17": [
+        "Work ⚠️ | Paul"
+      ]
+    }
+  },
+  "savedAt": "2026-01-21T11:07:41.871Z"
+}

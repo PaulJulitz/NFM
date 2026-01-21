@@ -1,0 +1,1544 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NFM - Batterien aufladen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #1a1f2b;
+        --muted: #5c6474;
+        --bg: #f6f1ea;
+        --panel: #ffffff;
+        --accent: #1e5b6e;
+        --accent-2: #d06b4f;
+        --accent-3: #3f7d59;
+        --holiday: #2a6f97;
+        --closing: #b23a48;
+        --weekend: #f1e2d4;
+        --shadow: 0 16px 40px rgba(26, 31, 43, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at 15% 15%, #efe4d5 0%, #f6f1ea 45%, #f2ebe3 100%);
+        min-height: 100vh;
+      }
+
+      .page {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 32px 24px 64px;
+      }
+
+      header {
+        display: grid;
+        gap: 16px;
+        align-items: center;
+        grid-template-columns: 1fr;
+        margin-bottom: 24px;
+      }
+
+      .title {
+        font-family: "Fraunces", "Times New Roman", serif;
+        font-size: 2.4rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        margin: 4px 0 0;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .control {
+        background: var(--panel);
+        padding: 10px 14px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      label {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      select {
+        border: 1px solid #d4c8b9;
+        border-radius: 10px;
+        padding: 6px 10px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        background: #fff;
+      }
+
+      .action-button {
+        border: none;
+        background: var(--accent);
+        color: #fff;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 10px 20px rgba(30, 91, 110, 0.2);
+      }
+
+      .action-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(30, 91, 110, 0.25);
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .status {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-left: 8px;
+      }
+
+      .counts {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+
+      .count-card {
+        background: var(--panel);
+        padding: 14px 16px;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+
+      .count-label {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .count-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        display: inline-block;
+      }
+
+      .dot.holiday {
+        background: var(--holiday);
+      }
+
+      .dot.closing {
+        background: var(--closing);
+      }
+
+      .dot.event {
+        background: #3a506b;
+      }
+
+      .calendar {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(3, minmax(250px, 1fr));
+        margin-top: 24px;
+      }
+
+      .month {
+        background: var(--panel);
+        border-radius: 18px;
+        padding: 12px;
+        box-shadow: var(--shadow);
+        animation: rise 0.7s ease forwards;
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      .month-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 4px 6px 10px;
+      }
+
+      .month-name {
+        font-family: "Fraunces", "Times New Roman", serif;
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      .weekdays,
+      .days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        text-align: center;
+      }
+
+      .weekdays span {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+
+      .day {
+        border-radius: 8px;
+        padding: 6px 4px;
+        min-height: 42px;
+        position: relative;
+        cursor: pointer;
+        border: 1px solid transparent;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 4px;
+        align-items: center;
+        font-size: 0.8rem;
+        background: #fff;
+        transition: transform 0.2s ease, border 0.2s ease, background 0.2s ease;
+      }
+
+      .day:hover {
+        transform: translateY(-2px);
+        border-color: #d4c8b9;
+      }
+
+      .day.weekend {
+        background: var(--weekend);
+      }
+
+      .day.inactive {
+        visibility: hidden;
+      }
+
+      .badges {
+        display: flex;
+        gap: 4px;
+        margin-top: 2px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .badge {
+        font-size: 0.55rem;
+        padding: 2px 4px;
+        border-radius: 6px;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+      }
+
+      .badge.holiday {
+        background: var(--holiday);
+      }
+
+      .badge.closing {
+        background: var(--closing);
+      }
+
+      .badge.event {
+        background: #3a506b;
+      }
+
+      .category-dots {
+        display: flex;
+        gap: 4px;
+        margin-top: 2px;
+        justify-content: center;
+        min-height: 8px;
+      }
+
+      .category-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+      }
+
+      .category-dot.a {
+        background: var(--accent);
+      }
+
+      .category-dot.b {
+        background: var(--accent-2);
+      }
+
+      .category-dot.c {
+        background: var(--accent-3);
+      }
+
+      .category-picker {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .choice {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid #d4c8b9;
+        background: #fff;
+        cursor: pointer;
+        font-size: 0.85rem;
+      }
+
+      .choice input {
+        accent-color: var(--accent);
+      }
+
+      .note {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .view-toggle {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+
+      .view-button {
+        border: 1px solid #d4c8b9;
+        background: #fff;
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .view-button.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .closing-view {
+        display: none;
+        margin-top: 20px;
+        background: var(--panel);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .event-view {
+        display: none;
+        margin-top: 20px;
+        background: var(--panel);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .closing-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .closing-title {
+        margin: 0 0 6px;
+        font-family: "Fraunces", "Times New Roman", serif;
+        font-size: 1.35rem;
+      }
+
+      .event-title {
+        margin: 0 0 6px;
+        font-family: "Fraunces", "Times New Roman", serif;
+        font-size: 1.35rem;
+      }
+
+      .table-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      .closing-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+
+      .closing-table th,
+      .closing-table td {
+        border-bottom: 1px solid #ece1d3;
+        padding: 10px 8px;
+        text-align: left;
+        font-size: 0.85rem;
+      }
+
+      .closing-table th {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.7rem;
+        color: var(--muted);
+      }
+
+      .table-input {
+        width: 100%;
+        border: 1px solid #d4c8b9;
+        border-radius: 8px;
+        padding: 6px 8px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        background: #fff;
+      }
+
+      .row-actions {
+        white-space: nowrap;
+      }
+
+      .row-button {
+        border: 1px solid #d4c8b9;
+        background: #fff;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        cursor: pointer;
+      }
+
+      .version {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+      }
+
+      .event-input {
+        border: 1px solid #d4c8b9;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        min-width: 180px;
+      }
+
+      @keyframes rise {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 1000px) {
+        .calendar {
+          grid-template-columns: repeat(2, minmax(220px, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        header {
+          gap: 20px;
+        }
+
+        .calendar {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .table-actions {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div>
+          <h1 class="title">Project NFM: Selbstführsorge</h1>
+          <div class="version" id="versionLabel">v2.0.0</div>
+          <p class="subtitle">Public holidays, kindergarten closing days, and your own selections in one view.</p>
+        </div>
+        <div class="controls">
+          <div class="control">
+            <label for="yearSelect">Year</label>
+            <select id="yearSelect"></select>
+          </div>
+          <div class="control">
+            <label for="regionSelect">Region</label>
+            <select id="regionSelect"></select>
+          </div>
+          <div class="control">
+            <label>Category</label>
+            <div class="category-picker" id="categoryPicker"></div>
+          </div>
+          <div class="control" id="eventControl">
+            <label for="eventName">Event name</label>
+            <input class="event-input" id="eventName" type="text" placeholder="e.g. Summer party" />
+          </div>
+          <div class="control">
+            <button class="action-button" id="saveButton" type="button">Save selections</button>
+            <button class="action-button" id="loadButton" type="button">Load selections</button>
+            <input class="file-input" id="loadInput" type="file" accept="application/json" />
+            <span class="status" id="saveStatus">Not saved</span>
+          </div>
+        </div>
+        <div class="counts" id="counts"></div>
+        <div class="legend">
+          <span><span class="dot holiday"></span>Public holiday</span>
+          <span><span class="dot closing"></span>Kindergarten closing day</span>
+          <span><span class="dot event"></span>Event</span>
+          <span class="note">Click a date to toggle multiple categories or add events.</span>
+        </div>
+        <div class="view-toggle">
+          <button class="view-button active" id="calendarViewButton" type="button">Calendar view</button>
+          <button class="view-button" id="closingViewButton" type="button">Closing days table</button>
+          <button class="view-button" id="eventViewButton" type="button">Events table</button>
+        </div>
+      </header>
+      <main>
+        <section class="calendar" id="calendarView"></section>
+        <section class="closing-view" id="closingView">
+          <div class="closing-header">
+            <div>
+              <h2 class="closing-title">Kindergarten closing days</h2>
+              <p class="note">Manage date ranges and descriptions. Changes update user closing days.</p>
+            </div>
+            <div class="table-actions">
+              <button class="action-button" id="addClosingRow" type="button">Add row</button>
+              <button class="action-button" id="linkJsonButton" type="button">Link JSON file</button>
+              <button class="action-button" id="saveClosingButton" type="button">Save closing days</button>
+              <span class="status" id="closingStatus">Not saved</span>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="closing-table">
+              <thead>
+                <tr>
+                  <th>Anlass</th>
+                  <th>Von</th>
+                  <th>Bis</th>
+                  <th>Werktage (Mo-Fri)</th>
+                  <th>Hinweis</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="closingTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="event-view" id="eventView">
+          <div class="closing-header">
+            <div>
+              <h2 class="event-title">Events</h2>
+              <p class="note">Manage dated events. Changes update the events list.</p>
+            </div>
+            <div class="table-actions">
+              <button class="action-button" id="addEventRow" type="button">Add event</button>
+              <button class="action-button" id="linkEventJsonButton" type="button">Link JSON file</button>
+              <button class="action-button" id="saveEventButton" type="button">Save events</button>
+              <span class="status" id="eventStatus">Not saved</span>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="closing-table">
+              <thead>
+                <tr>
+                  <th>Von</th>
+                  <th>Bis</th>
+                  <th>Event name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="eventTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const categories = [
+        { id: "a", name: "Urlaubstag - Franziska", color: "var(--accent)" },
+        { id: "b", name: "Frei - Paul", color: "var(--accent-2)" },
+        { id: "c", name: "Sonderurlaubstag", color: "var(--accent-3)" },
+      ];
+
+      const holidayData = {
+        Berlin: {
+          "2026-01-01": "New Year",
+          "2026-04-03": "Good Friday",
+          "2026-04-06": "Easter Monday",
+          "2026-05-01": "Labor Day",
+          "2026-05-14": "Ascension Day",
+          "2026-05-25": "Whit Monday",
+          "2026-10-03": "German Unity",
+          "2026-12-25": "Christmas Day",
+          "2026-12-26": "Second Day of Christmas",
+        },
+        Hamburg: {
+          "2026-01-01": "New Year",
+          "2026-04-03": "Good Friday",
+          "2026-04-06": "Easter Monday",
+          "2026-05-01": "Labor Day",
+          "2026-05-14": "Ascension Day",
+          "2026-05-25": "Whit Monday",
+          "2026-10-03": "German Unity",
+          "2026-10-31": "Reformation Day",
+          "2026-12-25": "Christmas Day",
+          "2026-12-26": "Second Day of Christmas",
+        },
+        Bavaria: {
+          "2026-01-01": "New Year",
+          "2026-01-06": "Epiphany",
+          "2026-04-03": "Good Friday",
+          "2026-04-06": "Easter Monday",
+          "2026-05-01": "Labor Day",
+          "2026-05-14": "Ascension Day",
+          "2026-05-25": "Whit Monday",
+          "2026-06-04": "Corpus Christi",
+          "2026-10-03": "German Unity",
+          "2026-12-25": "Christmas Day",
+          "2026-12-26": "Second Day of Christmas",
+        },
+      };
+
+      const closingDays = {
+        Berlin: {
+          "2026-02-16": "Kita team day",
+          "2026-07-24": "Summer maintenance",
+          "2026-12-23": "Winter cleanup",
+        },
+        Hamburg: {
+          "2026-03-13": "Pedagogical day",
+          "2026-08-07": "Staff training",
+          "2026-12-18": "Year-end cleanup",
+        },
+        Bavaria: {
+        },
+      };
+
+      const state = {
+        year: 2026,
+        region: "Bavaria",
+        selections: {},
+        activeCategory: categories[0].id,
+        userClosingDays: {},
+        events: {},
+        editMode: "category",
+      };
+
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+
+      const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+      const calendarEl = document.getElementById("calendarView");
+      const closingViewEl = document.getElementById("closingView");
+      const eventViewEl = document.getElementById("eventView");
+      const calendarViewButton = document.getElementById("calendarViewButton");
+      const closingViewButton = document.getElementById("closingViewButton");
+      const eventViewButton = document.getElementById("eventViewButton");
+      const countsEl = document.getElementById("counts");
+      const yearSelect = document.getElementById("yearSelect");
+      const regionSelect = document.getElementById("regionSelect");
+      const categoryPicker = document.getElementById("categoryPicker");
+      const eventControl = document.getElementById("eventControl");
+      const eventNameInput = document.getElementById("eventName");
+      const saveButton = document.getElementById("saveButton");
+      const loadButton = document.getElementById("loadButton");
+      const loadInput = document.getElementById("loadInput");
+      const saveStatus = document.getElementById("saveStatus");
+      const closingTableBody = document.getElementById("closingTableBody");
+      const addClosingRow = document.getElementById("addClosingRow");
+      const saveClosingButton = document.getElementById("saveClosingButton");
+      const linkJsonButton = document.getElementById("linkJsonButton");
+      const closingStatus = document.getElementById("closingStatus");
+      const eventTableBody = document.getElementById("eventTableBody");
+      const addEventRow = document.getElementById("addEventRow");
+      const saveEventButton = document.getElementById("saveEventButton");
+      const linkEventJsonButton = document.getElementById("linkEventJsonButton");
+      const eventStatus = document.getElementById("eventStatus");
+
+      let saveHandle = null;
+      let autoSaveTimer = null;
+
+      const closingSchedule = [
+        {
+          id: "row-1",
+          anlass: "Weihnachten 2025/26",
+          from: "2026-01-01",
+          to: "2026-01-06",
+          hinweis: "Do + Fr + Mo + Di",
+        },
+        {
+          id: "row-2",
+          anlass: "Fasching",
+          from: "2026-02-16",
+          to: "2026-02-17",
+          hinweis: "Mo + Di",
+        },
+        {
+          id: "row-3",
+          anlass: "Gruendonnerstag",
+          from: "2026-04-02",
+          to: "2026-04-02",
+          hinweis: "ab 12:30 Uhr",
+        },
+        {
+          id: "row-4",
+          anlass: "Mai-Schliesstage",
+          from: "2026-05-14",
+          to: "2026-05-15",
+          hinweis: "Do + Fr",
+        },
+        {
+          id: "row-5",
+          anlass: "Juni-Schliesstage",
+          from: "2026-06-04",
+          to: "2026-06-05",
+          hinweis: "Do + Fr",
+        },
+        {
+          id: "row-6",
+          anlass: "Sommerferien 2026",
+          from: "2026-08-03",
+          to: "2026-08-30",
+          hinweis: "nur Mo-Fr gezaehlt",
+        },
+        {
+          id: "row-7",
+          anlass: "Planungstag",
+          from: "2026-09-01",
+          to: "2026-09-01",
+          hinweis: "Dienstag",
+        },
+        {
+          id: "row-8",
+          anlass: "Konzeptionstag",
+          from: "2026-11-18",
+          to: "2026-11-18",
+          hinweis: "Mittwoch",
+        },
+        {
+          id: "row-9",
+          anlass: "Weihnachten 2026",
+          from: "2026-12-24",
+          to: "2026-12-31",
+          hinweis: "Werktage bis Jahresende",
+        },
+      ];
+
+      let eventSchedule = [];
+      const createModeToggle = () => {
+        const container = document.createElement("div");
+        container.className = "control";
+        container.innerHTML = `
+          <label>Edit</label>
+          <div class="category-picker" id="modePicker">
+            <label class="choice">
+              <input type="radio" name="editMode" value="category" checked />
+              <span>Category selection</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="editMode" value="closing" />
+              <span>Kindergarten closing days</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="editMode" value="event" />
+              <span>Events</span>
+            </label>
+          </div>
+        `;
+        return container;
+      };
+
+      const pad = (value) => String(value).padStart(2, "0");
+      const toKey = (year, month, day) => `${year}-${pad(month + 1)}-${pad(day)}`;
+      const parseDate = (value) => {
+        if (!value) {
+          return null;
+        }
+        const [year, month, day] = value.split("-").map(Number);
+        if (!year || !month || !day) {
+          return null;
+        }
+        return new Date(year, month - 1, day);
+      };
+      const formatDate = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+      const countWeekdays = (startValue, endValue) => {
+        const start = parseDate(startValue);
+        const end = parseDate(endValue);
+        if (!start || !end) {
+          return 0;
+        }
+        const startDate = start <= end ? start : end;
+        const endDate = start <= end ? end : start;
+        let count = 0;
+        const current = new Date(startDate);
+        while (current <= endDate) {
+          const day = current.getDay();
+          if (day !== 0 && day !== 6) {
+            count += 1;
+          }
+          current.setDate(current.getDate() + 1);
+        }
+        return count;
+      };
+      const buildClosingDescription = (row) => {
+        if (row.hinweis && row.anlass) {
+          return `${row.anlass} - ${row.hinweis}`;
+        }
+        return row.anlass || row.hinweis || "Closing day";
+      };
+
+      const syncEventScheduleFromState = () => {
+        const userEventsMap = getUserEvents();
+        eventSchedule = Object.entries(userEventsMap).flatMap(([dateKey, names]) =>
+          (names || []).map((name) => ({
+            id: `event-${dateKey}-${name}`.replace(/\s+/g, "-").toLowerCase(),
+            from: dateKey,
+            to: dateKey,
+            name,
+          }))
+        );
+      };
+
+      const buildSelectors = () => {
+        const baseYear = 2026;
+        const years = [baseYear - 1, baseYear, baseYear + 1, baseYear + 2];
+        yearSelect.innerHTML = years
+          .map((year) => `<option value="${year}">${year}</option>`)
+          .join("");
+        if (!years.includes(state.year)) {
+          state.year = currentYear;
+        }
+        yearSelect.value = state.year;
+
+        regionSelect.innerHTML = Object.keys(holidayData)
+          .map((region) => `<option value="${region}">${region}</option>`)
+          .join("");
+        regionSelect.value = state.region;
+
+        categoryPicker.innerHTML = categories
+          .map(
+            (category) => `
+            <label class="choice">
+              <input type="radio" name="category" value="${category.id}" ${
+                state.activeCategory === category.id ? "checked" : ""
+              } />
+              <span>${category.name}</span>
+            </label>
+          `
+          )
+          .join("");
+      };
+
+      const updateCounts = (closingCount) => {
+        const counts = categories.reduce((acc, category) => {
+          acc[category.id] = 0;
+          return acc;
+        }, {});
+        Object.values(state.selections).forEach((categoryIds) => {
+          const list = Array.isArray(categoryIds) ? categoryIds : [categoryIds];
+          list.forEach((categoryId) => {
+            if (counts[categoryId] !== undefined) {
+              counts[categoryId] += 1;
+            }
+          });
+        });
+        countsEl.innerHTML = categories
+          .map(
+            (category) => `
+            <div class="count-card">
+              <div>
+                <div class="count-label">${category.name}</div>
+                <div class="note">Selected days</div>
+              </div>
+              <div class="count-value">${counts[category.id]}</div>
+            </div>
+          `
+          )
+          .join("");
+        countsEl.innerHTML += `
+          <div class="count-card">
+            <div>
+              <div class="count-label">Kindergarten closing days</div>
+              <div class="note">Default + user selected</div>
+            </div>
+            <div class="count-value">${closingCount}</div>
+          </div>
+        `;
+      };
+
+      const getUserClosingDays = () => {
+        if (!state.userClosingDays[state.region]) {
+          state.userClosingDays[state.region] = {};
+        }
+        return state.userClosingDays[state.region];
+      };
+
+      const getUserEvents = () => {
+        if (!state.events[state.region]) {
+          state.events[state.region] = {};
+        }
+        return state.events[state.region];
+      };
+
+      const applyScheduleToUserClosingDays = () => {
+        const userClosingMap = getUserClosingDays();
+        Object.keys(userClosingMap).forEach((key) => {
+          delete userClosingMap[key];
+        });
+        closingSchedule.forEach((row) => {
+          const start = parseDate(row.from);
+          const end = parseDate(row.to);
+          if (!start || !end) {
+            return;
+          }
+          const startDate = start <= end ? start : end;
+          const endDate = start <= end ? end : start;
+          const current = new Date(startDate);
+          const description = buildClosingDescription(row);
+          while (current <= endDate) {
+            const key = formatDate(current);
+            userClosingMap[key] = description;
+            current.setDate(current.getDate() + 1);
+          }
+        });
+      };
+
+      const applyEventScheduleToState = () => {
+        const userEventsMap = getUserEvents();
+        Object.keys(userEventsMap).forEach((key) => {
+          delete userEventsMap[key];
+        });
+        eventSchedule.forEach((row) => {
+          if (!row.from || !row.to || !row.name) {
+            return;
+          }
+          const start = parseDate(row.from);
+          const end = parseDate(row.to);
+          if (!start || !end) {
+            return;
+          }
+          const startDate = start <= end ? start : end;
+          const endDate = start <= end ? end : start;
+          const current = new Date(startDate);
+          while (current <= endDate) {
+            const key = formatDate(current);
+            const list = userEventsMap[key] || [];
+            list.push(row.name);
+            userEventsMap[key] = list;
+            current.setDate(current.getDate() + 1);
+          }
+        });
+      };
+
+      const renderCalendar = () => {
+        const holidayMap = holidayData[state.region] || {};
+        const closingMap = closingDays[state.region] || {};
+        const userClosingMap = getUserClosingDays();
+        const userEventsMap = getUserEvents();
+        const closingCount = (() => {
+          const combined = new Set([
+            ...Object.keys(closingMap),
+            ...Object.keys(userClosingMap),
+          ]);
+          let count = 0;
+          combined.forEach((dateKey) => {
+            const date = parseDate(dateKey);
+            if (!date) {
+              return;
+            }
+            const day = date.getDay();
+            if (day === 0 || day === 6) {
+              return;
+            }
+            if (holidayMap[dateKey]) {
+              return;
+            }
+            count += 1;
+          });
+          return count;
+        })();
+
+        calendarEl.innerHTML = "";
+
+        monthNames.forEach((monthName, monthIndex) => {
+          const monthEl = document.createElement("section");
+          monthEl.className = "month";
+          monthEl.style.animationDelay = `${monthIndex * 0.04}s`;
+
+          const header = document.createElement("div");
+          header.className = "month-header";
+          header.innerHTML = `<h2 class="month-name">${monthName}</h2><span>${state.year}</span>`;
+          monthEl.appendChild(header);
+
+          const weekRow = document.createElement("div");
+          weekRow.className = "weekdays";
+          weekRow.innerHTML = weekdays.map((day) => `<span>${day}</span>`).join("");
+          monthEl.appendChild(weekRow);
+
+          const daysEl = document.createElement("div");
+          daysEl.className = "days";
+
+          const firstDay = new Date(state.year, monthIndex, 1);
+          const startOffset = (firstDay.getDay() + 6) % 7;
+          const daysInMonth = new Date(state.year, monthIndex + 1, 0).getDate();
+
+          for (let i = 0; i < startOffset; i += 1) {
+            const empty = document.createElement("div");
+            empty.className = "day inactive";
+            daysEl.appendChild(empty);
+          }
+
+          for (let day = 1; day <= daysInMonth; day += 1) {
+            const dateKey = toKey(state.year, monthIndex, day);
+            const isWeekend = [0, 6].includes(new Date(state.year, monthIndex, day).getDay());
+            const isHoliday = Boolean(holidayMap[dateKey]);
+            const closingLabel = closingMap[dateKey] || userClosingMap[dateKey];
+            const isClosing = Boolean(closingLabel);
+            const categoryIds = state.selections[dateKey] || [];
+            const eventNames = userEventsMap[dateKey] || [];
+            const isEvent = eventNames.length > 0;
+
+            const dayEl = document.createElement("button");
+            dayEl.type = "button";
+            dayEl.className = `day${isWeekend ? " weekend" : ""}`;
+            dayEl.dataset.date = dateKey;
+
+            const badges = [];
+            if (isHoliday) {
+              badges.push('<span class="badge holiday">Holiday</span>');
+            }
+            if (isClosing) {
+              badges.push('<span class="badge closing">Kita</span>');
+            }
+            if (isEvent) {
+              badges.push('<span class="badge event">Event</span>');
+            }
+
+            const categoryDots = (Array.isArray(categoryIds) ? categoryIds : [categoryIds])
+              .map((categoryId) => `<span class="category-dot ${categoryId}"></span>`)
+              .join("");
+
+            dayEl.innerHTML = `
+              <div>${day}</div>
+              <div class="badges">${badges.join("")}</div>
+              <div class="category-dots">${categoryDots}</div>
+            `;
+
+            const tooltip = [];
+            if (isHoliday) {
+              tooltip.push(`Holiday: ${holidayMap[dateKey]}`);
+            }
+            if (isClosing) {
+              tooltip.push(`Kita closing: ${closingLabel}`);
+            }
+            if (isEvent) {
+              tooltip.push(`Event: ${eventNames.join(", ")}`);
+            }
+            if (tooltip.length) {
+              dayEl.title = tooltip.join(" | ");
+            }
+
+            daysEl.appendChild(dayEl);
+          }
+
+          monthEl.appendChild(daysEl);
+          calendarEl.appendChild(monthEl);
+        });
+
+        updateCounts(closingCount);
+      };
+
+      const renderClosingTable = () => {
+        closingTableBody.innerHTML = "";
+        closingSchedule.forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.dataset.rowId = row.id;
+          tr.innerHTML = `
+            <td><input class="table-input" data-field="anlass" type="text" value="${row.anlass}" /></td>
+            <td><input class="table-input" data-field="from" type="date" value="${row.from}" /></td>
+            <td><input class="table-input" data-field="to" type="date" value="${row.to}" /></td>
+            <td class="weekday-count">${countWeekdays(row.from, row.to)}</td>
+            <td><input class="table-input" data-field="hinweis" type="text" value="${row.hinweis}" /></td>
+            <td class="row-actions">
+              <button class="row-button" type="button" data-action="remove">Remove</button>
+            </td>
+          `;
+          closingTableBody.appendChild(tr);
+        });
+      };
+
+      const renderEventTable = () => {
+        eventTableBody.innerHTML = "";
+        eventSchedule.forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.dataset.rowId = row.id;
+          tr.innerHTML = `
+            <td><input class="table-input" data-field="from" type="date" value="${row.from}" /></td>
+            <td><input class="table-input" data-field="to" type="date" value="${row.to}" /></td>
+            <td><input class="table-input" data-field="name" type="text" value="${row.name}" /></td>
+            <td class="row-actions">
+              <button class="row-button" type="button" data-action="remove">Remove</button>
+            </td>
+          `;
+          eventTableBody.appendChild(tr);
+        });
+      };
+
+      const scheduleAutoSave = (statusEl) => {
+        if (!saveHandle) {
+          statusEl.textContent = "Unsaved changes (link JSON file to auto-save)";
+          return;
+        }
+        if (autoSaveTimer) {
+          clearTimeout(autoSaveTimer);
+        }
+        autoSaveTimer = setTimeout(async () => {
+          try {
+            await writeSelectionsToHandle(saveHandle, statusEl);
+          } catch (error) {
+            statusEl.textContent = "Auto-save failed";
+          }
+        }, 400);
+      };
+
+      const handleClosingTableChange = (event) => {
+        const input = event.target.closest(".table-input");
+        if (!input) {
+          return;
+        }
+        const rowEl = input.closest("tr");
+        if (!rowEl) {
+          return;
+        }
+        const row = closingSchedule.find((item) => item.id === rowEl.dataset.rowId);
+        if (!row) {
+          return;
+        }
+        const field = input.dataset.field;
+        row[field] = input.value;
+        const weekdayCell = rowEl.querySelector(".weekday-count");
+        if (weekdayCell) {
+          weekdayCell.textContent = countWeekdays(row.from, row.to);
+        }
+        applyScheduleToUserClosingDays();
+        renderCalendar();
+        scheduleAutoSave(closingStatus);
+      };
+
+      const handleClosingTableClick = (event) => {
+        const button = event.target.closest("button[data-action]");
+        if (!button) {
+          return;
+        }
+        const rowEl = button.closest("tr");
+        if (!rowEl) {
+          return;
+        }
+        const action = button.dataset.action;
+        if (action === "remove") {
+          const index = closingSchedule.findIndex((item) => item.id === rowEl.dataset.rowId);
+          if (index >= 0) {
+            closingSchedule.splice(index, 1);
+            renderClosingTable();
+            applyScheduleToUserClosingDays();
+            renderCalendar();
+            scheduleAutoSave(closingStatus);
+          }
+        }
+      };
+
+      const handleEventTableChange = (event) => {
+        const input = event.target.closest(".table-input");
+        if (!input) {
+          return;
+        }
+        const rowEl = input.closest("tr");
+        if (!rowEl) {
+          return;
+        }
+        const row = eventSchedule.find((item) => item.id === rowEl.dataset.rowId);
+        if (!row) {
+          return;
+        }
+        const field = input.dataset.field;
+        row[field] = input.value;
+        applyEventScheduleToState();
+        renderCalendar();
+        scheduleAutoSave(eventStatus);
+      };
+
+      const handleEventTableClick = (event) => {
+        const button = event.target.closest("button[data-action]");
+        if (!button) {
+          return;
+        }
+        const rowEl = button.closest("tr");
+        if (!rowEl) {
+          return;
+        }
+        const action = button.dataset.action;
+        if (action === "remove") {
+          const index = eventSchedule.findIndex((item) => item.id === rowEl.dataset.rowId);
+          if (index >= 0) {
+            eventSchedule.splice(index, 1);
+            renderEventTable();
+            applyEventScheduleToState();
+            renderCalendar();
+            scheduleAutoSave(eventStatus);
+          }
+        }
+      };
+
+      const handleDayClick = (event) => {
+        const button = event.target.closest(".day");
+        if (!button || button.classList.contains("inactive")) {
+          return;
+        }
+        const dateKey = button.dataset.date;
+        if (state.editMode === "closing") {
+          const userClosingMap = getUserClosingDays();
+          if (userClosingMap[dateKey]) {
+            delete userClosingMap[dateKey];
+          } else {
+            userClosingMap[dateKey] = "User selected closing day";
+          }
+        } else if (state.editMode === "event") {
+          const eventName = eventNameInput.value.trim();
+          if (!eventName) {
+            saveStatus.textContent = "Enter an event name";
+            return;
+          }
+          const userEventsMap = getUserEvents();
+          const existing = userEventsMap[dateKey] || [];
+          const index = existing.indexOf(eventName);
+          if (index >= 0) {
+            existing.splice(index, 1);
+          } else {
+            existing.push(eventName);
+          }
+          if (existing.length) {
+            userEventsMap[dateKey] = existing;
+          } else {
+            delete userEventsMap[dateKey];
+          }
+          syncEventScheduleFromState();
+          renderEventTable();
+        } else {
+          const current = state.selections[dateKey] || [];
+          const list = Array.isArray(current) ? current : [current];
+          const index = list.indexOf(state.activeCategory);
+          if (index >= 0) {
+            list.splice(index, 1);
+          } else {
+            list.push(state.activeCategory);
+          }
+          if (list.length) {
+            state.selections[dateKey] = list;
+          } else {
+            delete state.selections[dateKey];
+          }
+        }
+        renderCalendar();
+      };
+
+      const buildSavePayload = () => ({
+        year: state.year,
+        region: state.region,
+        selections: state.selections,
+        userClosingDays: state.userClosingDays,
+        events: state.events,
+        savedAt: new Date().toISOString(),
+      });
+
+      const writeSelectionsToHandle = async (handle, statusEl) => {
+        const payload = buildSavePayload();
+        const content = JSON.stringify(payload, null, 2);
+        const writable = await handle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        if (statusEl) {
+          statusEl.textContent = "Saved to file";
+        }
+      };
+
+      const saveSelections = async (statusEl = saveStatus) => {
+        const payload = buildSavePayload();
+        const content = JSON.stringify(payload, null, 2);
+        const fileName = `calendar-selections-${state.year}.json`;
+
+        if ("showSaveFilePicker" in window) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: fileName,
+              types: [
+                {
+                  description: "JSON",
+                  accept: { "application/json": [".json"] },
+                },
+              ],
+            });
+            saveHandle = handle;
+            await writeSelectionsToHandle(handle, statusEl);
+            return;
+          } catch (error) {
+            if (error && error.name === "AbortError") {
+              statusEl.textContent = "Save canceled";
+              return;
+            }
+          }
+        }
+
+        const blob = new Blob([content], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        statusEl.textContent = "Downloaded JSON";
+      };
+
+      const applyLoadedData = (payload) => {
+        if (!payload || typeof payload !== "object") {
+          throw new Error("Invalid payload format.");
+        }
+        if (payload.year) {
+          state.year = Number(payload.year);
+          yearSelect.value = state.year;
+        }
+        if (payload.region && holidayData[payload.region]) {
+          state.region = payload.region;
+          regionSelect.value = state.region;
+        }
+        const rawSelections = payload.selections || {};
+        state.selections = Object.entries(rawSelections).reduce((acc, [key, value]) => {
+          acc[key] = Array.isArray(value) ? value : [value];
+          return acc;
+        }, {});
+        state.userClosingDays = payload.userClosingDays || {};
+        const rawEvents = payload.events || {};
+        const eventKeys = Object.keys(rawEvents);
+        const looksLikeDateMap =
+          eventKeys.length > 0 && eventKeys.every((key) => /^\d{4}-\d{2}-\d{2}$/.test(key));
+        if (looksLikeDateMap) {
+          state.events = { [state.region]: rawEvents };
+        } else {
+          state.events = rawEvents;
+        }
+        syncEventScheduleFromState();
+        renderEventTable();
+        renderCalendar();
+      };
+
+      const loadSelections = (event) => {
+        const file = event.target.files[0];
+        if (!file) {
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const payload = JSON.parse(reader.result);
+            applyLoadedData(payload);
+            saveStatus.textContent = "Loaded selections";
+          } catch (error) {
+            saveStatus.textContent = "Load failed";
+          }
+        };
+        reader.readAsText(file);
+        loadInput.value = "";
+      };
+
+      const linkJsonFile = async (statusEl) => {
+        if (!("showOpenFilePicker" in window)) {
+          statusEl.textContent = "Linking not supported in this browser";
+          return;
+        }
+        try {
+          const [handle] = await window.showOpenFilePicker({
+            multiple: false,
+            types: [
+              {
+                description: "JSON",
+                accept: { "application/json": [".json"] },
+              },
+            ],
+          });
+          saveHandle = handle;
+          statusEl.textContent = "Linked file. Auto-save enabled.";
+          await writeSelectionsToHandle(handle, statusEl);
+        } catch (error) {
+          if (error && error.name === "AbortError") {
+            statusEl.textContent = "Link canceled";
+          } else {
+            statusEl.textContent = "Link failed";
+          }
+        }
+      };
+
+      const showCalendarView = () => {
+        calendarEl.style.display = "grid";
+        closingViewEl.style.display = "none";
+        eventViewEl.style.display = "none";
+        calendarViewButton.classList.add("active");
+        closingViewButton.classList.remove("active");
+        eventViewButton.classList.remove("active");
+      };
+
+      const showClosingView = () => {
+        calendarEl.style.display = "none";
+        closingViewEl.style.display = "block";
+        eventViewEl.style.display = "none";
+        calendarViewButton.classList.remove("active");
+        closingViewButton.classList.add("active");
+        eventViewButton.classList.remove("active");
+      };
+
+      const showEventView = () => {
+        calendarEl.style.display = "none";
+        closingViewEl.style.display = "none";
+        eventViewEl.style.display = "block";
+        calendarViewButton.classList.remove("active");
+        closingViewButton.classList.remove("active");
+        eventViewButton.classList.add("active");
+      };
+
+      buildSelectors();
+      document.querySelector(".controls").appendChild(createModeToggle());
+      eventControl.style.display = "none";
+      applyScheduleToUserClosingDays();
+      renderClosingTable();
+      syncEventScheduleFromState();
+      renderEventTable();
+      renderCalendar();
+
+      calendarEl.addEventListener("click", handleDayClick);
+      yearSelect.addEventListener("change", (event) => {
+        state.year = Number(event.target.value);
+        renderCalendar();
+      });
+      regionSelect.addEventListener("change", (event) => {
+        state.region = event.target.value;
+        syncEventScheduleFromState();
+        renderEventTable();
+        renderCalendar();
+      });
+      categoryPicker.addEventListener("change", (event) => {
+        state.activeCategory = event.target.value;
+      });
+      saveButton.addEventListener("click", () => saveSelections(saveStatus));
+      loadButton.addEventListener("click", () => loadInput.click());
+      loadInput.addEventListener("change", loadSelections);
+      calendarViewButton.addEventListener("click", showCalendarView);
+      closingViewButton.addEventListener("click", showClosingView);
+      eventViewButton.addEventListener("click", showEventView);
+      closingTableBody.addEventListener("input", handleClosingTableChange);
+      closingTableBody.addEventListener("click", handleClosingTableClick);
+      eventTableBody.addEventListener("input", handleEventTableChange);
+      eventTableBody.addEventListener("click", handleEventTableClick);
+      addClosingRow.addEventListener("click", () => {
+        closingSchedule.push({
+          id: `row-${Date.now()}`,
+          anlass: "",
+          from: "",
+          to: "",
+          hinweis: "",
+        });
+        renderClosingTable();
+        scheduleAutoSave(closingStatus);
+      });
+      linkJsonButton.addEventListener("click", () => linkJsonFile(closingStatus));
+      saveClosingButton.addEventListener("click", () => saveSelections(closingStatus));
+      addEventRow.addEventListener("click", () => {
+        eventSchedule.push({
+          id: `event-${Date.now()}`,
+          from: "",
+          to: "",
+          name: "",
+        });
+        renderEventTable();
+        scheduleAutoSave(eventStatus);
+      });
+      linkEventJsonButton.addEventListener("click", () => linkJsonFile(eventStatus));
+      saveEventButton.addEventListener("click", () => saveSelections(eventStatus));
+      document.addEventListener("change", (event) => {
+        if (event.target.name === "editMode") {
+          state.editMode = event.target.value;
+          eventControl.style.display = state.editMode === "event" ? "flex" : "none";
+        }
+      });
+    </script>
+  </body>
+</html>
