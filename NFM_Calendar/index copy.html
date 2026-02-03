@@ -1592,29 +1592,6 @@
         }
       };
 
-      const tryLoadFromQuery = () => {
-        const params = new URLSearchParams(window.location.search);
-        const dataPath = params.get("data");
-        if (!dataPath) {
-          return false;
-        }
-        fetch(dataPath, { cache: "no-store" })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Failed to load data file");
-            }
-            return response.json();
-          })
-          .then((payload) => {
-            applyLoadedData(payload);
-            saveStatus.textContent = "Loaded selections";
-          })
-          .catch(() => {
-            saveStatus.textContent = "Auto-load failed";
-          });
-        return true;
-      };
-
       buildSelectors();
       document.querySelector(".controls").appendChild(createModeToggle());
       eventControl.style.display = "none";
@@ -1623,10 +1600,7 @@
       syncEventScheduleFromState();
       renderEventTable();
       renderCalendar();
-      const loadedFromQuery = tryLoadFromQuery();
-      if (!loadedFromQuery) {
-        autoLoadSelections();
-      }
+      autoLoadSelections();
 
       calendarEl.addEventListener("click", handleDayClick);
       yearSelect.addEventListener("change", (event) => {
