@@ -9,6 +9,52 @@ This calendar stores three kinds of user data:
 All are stored in-memory in the `state` object inside `NFM_Calendar/index.html`.
 You can save them to a JSON file in the `NFM_Calendar` folder using the Save button.
 
+## How to use
+
+1. Open `NFM_Calendar/index.html` in a browser using a web server (recommended), or use the public redirect page on GitHub Pages.
+2. Pick `Year`, `Region`, and `Category`, then click dates to toggle selections.
+3. Use the view buttons to switch to closing days or events and edit those tables.
+4. Click `Save selections` to export your JSON and `Load selections` to import it again.
+
+## Local preview (recommended for development)
+
+Run a simple local server from the repo root:
+
+```bash
+python -m http.server 8000
+```
+
+Then open:
+
+```
+http://localhost:8000/NFM_Calendar/
+```
+
+This avoids `file://` restrictions so JSON auto-load works.
+
+## GitHub Pages (public website)
+
+1. Ensure `NFM_Calendar/calendar-selections-2026.json` exists in the same folder as `index.html`.
+2. Push the repo to GitHub.
+3. Enable Pages: Settings → Pages → Deploy from a branch → `main` and `/ (root)`.
+4. Open:
+
+```
+https://<your-user>.github.io/<repo>/NFM_Calendar/public.html
+```
+
+`public.html` redirects to `index.html` with a `?data=calendar-selections-2026.json` parameter so the calendar auto-loads the JSON on first load.
+
+## Auto-load data file
+
+The calendar checks for a `data` query parameter:
+
+```
+index.html?data=calendar-selections-2026.json
+```
+
+If present, it fetches that file and loads it. If not present, it tries to auto-load `calendar-selections-<year>.json` from the same folder.
+
 ## Date key format
 
 All stored dates use the same key format:
